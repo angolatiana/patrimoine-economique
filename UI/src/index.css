@@ -1,0 +1,32 @@
+
+
+/*css du tableau*/
+h2{
+  color: rgb(11, 11, 154);
+  background-color:rgb(180, 180, 220);
+  padding: 3rem 0;
+}
+
+.my-4{
+  background-color: rgb(156, 195, 243);
+  padding: 2rem 5rem;
+}
+
+input{
+  margin-right: 5rem;
+  height: 3rem;
+  width: 12rem;
+}
+
+.text-end button{
+  margin-right: 5rem;
+  height: 3rem;
+  width: 12rem;
+  background-color:rgb(180, 180, 220) ;
+  color:rgb(11, 11, 154) ;
+}
+
+
+
+
+
