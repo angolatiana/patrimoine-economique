@@ -5,6 +5,7 @@ import './App.css';
 import donnees from "../data.json";
 import Flux from "./models/possessions/Flux";
 import Possession from "./models/possessions/Possession";
+import LineChart from "../line/line";
 
 function DatePicker(props) {
   const {setDate}= props
@@ -107,7 +108,8 @@ function App() {
 
 
   return (
-    <Container className="my-4">
+    <>
+        <Container className="my-4">
       <h2 className="text-center">LISTE DES PESSESSION</h2>
         <Card.Body>
           <PossessionsTable possessions={possessions} flux={flux} currentDate={date} />
@@ -124,6 +126,10 @@ function App() {
       </Row>
       <h3 className="text-center">Valeur du Patrimoine: {patrimoineValue} ARIARY</h3>
     </Container>
+        <LineChart/>
+    </>
+
+
   );
 }
 
