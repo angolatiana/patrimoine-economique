@@ -1,42 +1,115 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f8ff;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+  width: 100%;
+  padding: 20px;
+}
+
+.navbar {
+  background-color: #87ceeb;
+}
+
+.navbar-brand {
+  color: white !important;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  color: white !important;
+  font-size: 1.2rem;
+}
+
+.nav-link:hover {
+  color: #ffe4e1 !important;
+}
+
+h1, h3 {
+  color: #4682b4;
   text-align: center;
+  font-size: 2rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+form {
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #87ceeb;
+  border-radius: 5px;
+  background-color: white;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+label {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="email"],
+select {
+  font-size: 1.2rem;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #87ceeb;
+  border-radius: 5px;
 }
 
-.card {
-  padding: 2em;
+button {
+  font-size: 1.2rem;
+  padding: 10px;
+  background-color: #4682b4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.read-the-docs {
-  color: #888;
+button:hover {
+  background-color: #5f9ea0;
+}
+
+.alert {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.table th {
+  background-color: #87ceeb;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.table td {
+  background-color: white;
+  font-size: 1.2rem;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #e0f7fa;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.mb-4 {
+  margin-bottom: 2rem;
 }

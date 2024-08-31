@@ -38,7 +38,7 @@ function Possessions() {
               parseFloat(possession.valeur),
               dateDebut,
               dateFin,
-              possession.tauxAmortissement,
+              possession.tauxAmortissement
             );
           }
         });
@@ -70,7 +70,7 @@ function Possessions() {
 
   const handleEdit = (libelle) => {
     const newValue = prompt("Enter new value for possession:");
-    fetch('http://localhost:3000/possession/${libelle}/edit', {
+    fetch("http://localhost:3000/possession/${libelle}/edit", {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ valeur: parseFloat(newValue) })
@@ -89,7 +89,6 @@ function Possessions() {
           ...prevPatrimoine,
           possessions: updatedPossessions
         }));
-        window.location.reload(); // Rafraîchit la page après l'édition
       })
       .catch(err => setError('Failed to update possession: ' + err.message));
   };
@@ -111,23 +110,9 @@ function Possessions() {
           ...prevPatrimoine,
           possessions: updatedPossessions
         }));
-        window.location.reload(); // Rafraîchit la page après la fermeture
+        window.location.reload();
       })
       .catch(err => setError('Failed to close possession: ' + err.message));
-  };
-
-  const handleDelete = (libelle) => {
-    fetch('http://localhost:3000/possession/${libelle}', {
-      method: 'DELETE'
-    })
-      .then(() => {
-        setPatrimoine(prevPatrimoine => ({
-          ...prevPatrimoine,
-          possessions: prevPatrimoine.possessions.filter(p => p.libelle !== libelle)
-        }));
-        window.location.reload(); // Rafraîchit la page après la suppression
-      })
-      .catch(err => setError('Failed to delete possession: ' + err.message));
   };
 
   return (
@@ -168,7 +153,6 @@ function Possessions() {
                           <td>
                             <Button variant="warning" onClick={() => handleEdit(possession.libelle)}>Edit</Button>
                             <Button variant="info" onClick={() => handleClose(possession.libelle)}>Close</Button>
-                            <Button variant="danger" onClick={() => handleDelete(possession.libelle)}>Delete</Button>
                           </td>
                         </tr>
                       );
