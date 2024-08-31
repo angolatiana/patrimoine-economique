@@ -4,9 +4,9 @@ import { Table, Button, Form, Container, Row, Col } from 'react-bootstrap';
 import './App.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Possession from "../../possessions/Possession";
-import Patrimoine from "../../Patrimoine";
-import Flux from "../../possessions/Flux";
+import Possession from "../src/models/possessions/Possession";
+import Patrimoine from "../src/models/Patrimoine";
+import Flux from "../src/models/possessions/Flux";
 
 function Possessions() {
   const [dateSelectionnee, setDateSelectionnee] = useState(new Date());
@@ -35,7 +35,7 @@ function Possessions() {
             return new Possession(
               possession.possesseur,
               possession.libelle,
-              parseFloat(possession.valeurConstante),
+              parseFloat(possession.valeur),
               dateDebut,
               dateFin,
               possession.tauxAmortissement,
@@ -70,7 +70,7 @@ function Possessions() {
 
   const handleEdit = (libelle) => {
     const newValue = prompt("Enter new value for possession:");
-    fetch(`http://localhost:3000/possession/${libelle}/edit`, {
+    fetch('http://localhost:3000/possession/${libelle}/edit', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ valeur: parseFloat(newValue) })
@@ -95,7 +95,7 @@ function Possessions() {
   };
 
   const handleClose = (libelle) => {
-    fetch(`http://localhost:3000/possession/${libelle}/close`, {
+    fetch("http://localhost:3000/possession/${libelle}/close", {
       method: 'POST'
     })
       .then(res => res.json())
@@ -117,7 +117,7 @@ function Possessions() {
   };
 
   const handleDelete = (libelle) => {
-    fetch(`http://localhost:3000/possession/${libelle}`, {
+    fetch('http://localhost:3000/possession/${libelle}', {
       method: 'DELETE'
     })
       .then(() => {
