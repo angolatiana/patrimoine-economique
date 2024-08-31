@@ -10,7 +10,7 @@ function MyNavbar() {
     <BrowserRouter basename="/">
       <Navbar bg="secondary" variant="light" expand="lg">
         <Container>
-          <Navbar.Brand style= {{color : 'white' }}href="#home">Patrimoine</Navbar.Brand>
+          <Navbar.Brand style= {{color : 'white' }} href="#home">Patrimoine</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav" >
             <Nav className="me-auto">

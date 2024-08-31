@@ -22,28 +22,16 @@ function Possessions() {
         const possessions = data.map((possession) => {
           const dateDebut = new Date(possession.dateDebut);
           const dateFin = possession.dateFin ? new Date(possession.dateFin) : null;
-          if (possession.tauxAmortissement !== null && possession.tauxAmortissement !== undefined) {
-            return new Possession(
-              possession.possesseur,
-              possession.libelle,
-              parseFloat(possession.valeur),
-              dateDebut,
-              dateFin,
-              parseFloat(possession.tauxAmortissement)
-            );
-          } else {
-            return new Possession(
-              possession.possesseur,
-              possession.libelle,
-              parseFloat(possession.valeur),
-              dateDebut,
-              dateFin,
-              possession.tauxAmortissement
-            );
-          }
+          return new Possession(
+            possession.possesseur,
+            possession.libelle,
+            parseFloat(possession.valeur),
+            dateDebut,
+            dateFin,
+            possession.tauxAmortissement !== null ? parseFloat(possession.tauxAmortissement) : null
+          );
         });
 
-        console.log('Possessions parsed:', possessions);
         const patrimoine = new Patrimoine("John Doe", possessions);
         setPatrimoine(patrimoine);
         setLoading(false);
@@ -70,7 +58,7 @@ function Possessions() {
 
   const handleEdit = (libelle) => {
     const newValue = prompt("Enter new value for possession:");
-    fetch("http://localhost:3000/possession/${libelle}/edit", {
+    fetch(`http://localhost:3000/possession/${libelle}/edit`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ valeur: parseFloat(newValue) })
@@ -89,12 +77,13 @@ function Possessions() {
           ...prevPatrimoine,
           possessions: updatedPossessions
         }));
+        window.location.reload();
       })
       .catch(err => setError('Failed to update possession: ' + err.message));
   };
 
   const handleClose = (libelle) => {
-    fetch("http://localhost:3000/possession/${libelle}/close", {
+    fetch(`http://localhost:3000/possession/${libelle}/close`, {
       method: 'POST'
     })
       .then(res => res.json())
@@ -140,25 +129,21 @@ function Possessions() {
                 </thead>
                 <tbody>
                   {patrimoine &&
-                    patrimoine.possessions.map((possession, index) => {
-                      console.log('Possession:', possession);
-                      return (
-                        <tr key={index}>
-                          <td>{possession.libelle}</td>
-                          <td>{possession.valeur}</td>
-                          <td>{possession.dateDebut instanceof Date ? possession.dateDebut.toISOString().split('T')[0] : 'Invalid Date'}</td>
-                          <td>{possession.dateFin ? (possession.dateFin instanceof Date ? possession.dateFin.toISOString().split('T')[0] : 'Invalid Date') : 'N/A'}</td>
-                          <td>{possession.tauxAmortissement}</td>
-                          <td>{possession instanceof Possession || possession instanceof Flux ? possession.getValeur(dateSelectionnee).toFixed(2) : 'N/A'|| possession.valeurConstante}</td>
-                          <td>
-                            <Button variant="warning" onClick={() => handleEdit(possession.libelle)}>Edit</Button>
-                            <Button variant="info" onClick={() => handleClose(possession.libelle)}>Close</Button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    patrimoine.possessions.map((possession, index) => (
+                      <tr key={index}>
+                        <td>{possession.libelle}</td>
+                        <td>{possession.valeur}</td>
+                        <td>{possession.dateDebut instanceof Date ? possession.dateDebut.toISOString().split('T')[0] : 'Invalid Date'}</td>
+                        <td>{possession.dateFin ? (possession.dateFin instanceof Date ? possession.dateFin.toISOString().split('T')[0] : 'Invalid Date') : 'N/A'}</td>
+                        <td>{possession.tauxAmortissement}</td>
+                        <td>{(possession instanceof Possession || possession instanceof Flux) ? possession.getValeur(dateSelectionnee).toFixed(2) : 'N/A'}</td>
+                        <td>
+                          <Button variant="warning" onClick={() => handleEdit(possession.libelle)}>Edit</Button>
+                          <Button variant="info" onClick={() => handleClose(possession.libelle)}>Close</Button>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
-
               </Table>
               <Form>
                 <div className="mb-4 mt-5">
