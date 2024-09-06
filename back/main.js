@@ -38,6 +38,7 @@ let possessions = [
     "valeurConstante": -300000
   }
 ];
+let patrimoine = {};
 
 app.get('/', (req, res) => {
   res.send('Welcome to the API!');
@@ -68,7 +69,7 @@ app.put('/possession/:libelle/edit', (req, res) => {
     Object.assign(possession, updatedDetails);
     res.json(possession);
   } else {
-    res.status(404).json({ error: 'Possession not found' });
+    res.status(404).send('Possession not found');
   }
 });
 
@@ -79,9 +80,59 @@ app.post('/possession/:libelle/close', (req, res) => {
     possession.dateFin = new Date().toISOString();
     res.json(possession);
   } else {
-    res.status(404).json({ error: 'Possession not found' });
+    res.status(404).send('Possession not found');
   }
 });
+
+app.get('/patrimoine/:date', (req, res) => {
+  const { date } = req.params;
+  res.json({ valeur: patrimoine[date] || 0 });
+});
+
+app.post('/patrimoine/range', (req, res) => {
+  const { dateDebut, dateFin } = req.body;
+  const startDate = new Date(dateDebut);
+  const endDate = new Date(dateFin);
+  const result = [];
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const currentDate = new Date(d).toISOString().split('T')[0];
+    let totalValue = 0;
+
+    possessions.forEach(p => {
+      const dateDebutPossession = new Date(p.dateDebut);
+      const dateFinPossession = p.dateFin ? new Date(p.dateFin) : endDate;
+
+      if (currentDate >= dateDebutPossession.toISOString().split('T')[0] &&
+          currentDate <= dateFinPossession.toISOString().split('T')[0]) {
+
+        let valeurPossession = p.valeur;
+
+        // Amortissement
+        if (p.tauxAmortissement) {
+          const nbJours = Math.floor((new Date(currentDate) - dateDebutPossession) / (1000 * 60 * 60 * 24));
+          const depreciation = valeurPossession * (p.tauxAmortissement / 100) * (nbJours / 365);
+          valeurPossession -= depreciation;
+        }
+
+        // Valeur constante
+        if (p.valeurConstante && p.jour) {
+          const nbJoursDepuisDebut = Math.floor((new Date(currentDate) - dateDebutPossession) / (1000 * 60 * 60 * 24)) + 1;
+          if (nbJoursDepuisDebut >= p.jour) {
+            valeurPossession += p.valeurConstante;
+          }
+        }
+
+        totalValue += valeurPossession;
+      }
+    });
+
+    result.push(totalValue);
+  }
+
+  res.json(result);
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
