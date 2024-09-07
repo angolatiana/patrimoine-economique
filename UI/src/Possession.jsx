@@ -14,6 +14,14 @@ function Possessions() {
   const [valeurPatrimoine, setValeurPatrimoine] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [editingPossession, setEditingPossession] = useState(null);
+  const [formValues, setFormValues] = useState({
+    libelle: '',
+    valeur: '',
+    dateDebut: null,
+    dateFin: null,
+    tauxAmortissement: ''
+  });
 
   useEffect(() => {
     fetch('http://localhost:3000/possession')
@@ -56,17 +64,42 @@ function Possessions() {
     }
   };
 
-  const handleEdit = (libelle) => {
-    const newValue = prompt("Enter new value for possession:");
-    fetch(`http://localhost:3000/possession/${libelle}/edit`, {
+  const handleEdit = (possession) => {
+    setEditingPossession(possession);
+    setFormValues({
+      libelle: possession.libelle,
+      valeur: possession.valeur,
+      dateDebut: possession.dateDebut,
+      dateFin: possession.dateFin,
+      tauxAmortissement: possession.tauxAmortissement
+    });
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: name.includes('date') ? new Date(value) : value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch(`http://localhost:3000/possession/${editingPossession.libelle}/edit`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ valeur: parseFloat(newValue) })
+      body: JSON.stringify({
+        libelle: formValues.libelle,
+        valeur: parseFloat(formValues.valeur),
+        dateDebut: formValues.dateDebut.toISOString(),
+        dateFin: formValues.dateFin ? formValues.dateFin.toISOString() : null,
+        tauxAmortissement: parseFloat(formValues.tauxAmortissement)
+      })
     })
       .then(res => res.json())
       .then(updatedPossession => {
         const updatedPossessions = patrimoine.possessions.map(p =>
-          p.libelle === libelle ? {
+          p.libelle === editingPossession.libelle ? {
             ...p,
             ...updatedPossession,
             dateDebut: new Date(updatedPossession.dateDebut),
@@ -77,7 +110,14 @@ function Possessions() {
           ...prevPatrimoine,
           possessions: updatedPossessions
         }));
-        window.location.reload();
+        setEditingPossession(null);
+        setFormValues({
+          libelle: '',
+          valeur: '',
+          dateDebut: null,
+          dateFin: null,
+          tauxAmortissement: ''
+        });
       })
       .catch(err => setError('Failed to update possession: ' + err.message));
   };
@@ -138,13 +178,40 @@ function Possessions() {
                         <td>{possession.tauxAmortissement}</td>
                         <td>{(possession instanceof Possession || possession instanceof Flux) ? possession.getValeur(dateSelectionnee).toFixed(2) : 'N/A'}</td>
                         <td>
-                          <Button variant="warning" onClick={() => handleEdit(possession.libelle)}>Edit</Button>
+                          <Button variant="warning" onClick={() => handleEdit(possession)}>Edit</Button>
                           <Button variant="info" onClick={() => handleClose(possession.libelle)}>Close</Button>
                         </td>
                       </tr>
                     ))}
                 </tbody>
               </Table>
+              {editingPossession && (
+                <Form onSubmit={handleSubmit}>
+                  <h3>Edit Possession</h3>
+                  <Form.Group controlId="formLibelle">
+                    <Form.Label>Libellé</Form.Label>
+                    <Form.Control type="text" name="libelle" value={formValues.libelle} onChange={handleFormChange} required />
+                  </Form.Group>
+                  <Form.Group controlId="formValeur">
+                    <Form.Label>Valeur</Form.Label>
+                    <Form.Control type="number" name="valeur" value={formValues.valeur} onChange={handleFormChange} required />
+                  </Form.Group>
+                  <Form.Group controlId="formDateDebut">
+                    <Form.Label>Date Début</Form.Label>
+                    <Form.Control type="date" name="dateDebut" value={formValues.dateDebut ? formValues.dateDebut.toISOString().split('T')[0] : ''} onChange={handleFormChange} required />
+                  </Form.Group>
+                  <Form.Group controlId="formDateFin">
+                    <Form.Label>Date Fin</Form.Label>
+                    <Form.Control type="date" name="dateFin" value={formValues.dateFin ? formValues.dateFin.toISOString().split('T')[0] : ''} onChange={handleFormChange} />
+                  </Form.Group>
+                  <Form.Group controlId="formTauxAmortissement">
+                    <Form.Label>Taux d'Amortissement</Form.Label>
+                    <Form.Control type="number" name="tauxAmortissement" value={formValues.tauxAmortissement} onChange={handleFormChange} />
+                  </Form.Group>
+                  <Button variant="success" type="submit">Mettre à jour</Button>
+                  <Button variant="danger" onClick={() => setEditingPossession(null)}>Annuler</Button>
+                </Form>
+              )}
               <Form>
                 <div className="mb-4 mt-5">
                   <label className='labelStyle'>Sélectionner une date :</label>
